@@ -1,0 +1,13 @@
+/*create table pokus (id number, jmeno varchar2(15));*/
+
+
+BEGIN
+      EXECUTE IMMEDIATE 'TRUNCATE TABLE pokus';
+    FOR i IN 1..10 LOOP
+        INSERT INTO pokus (id, jmeno)
+        VALUES (i, 'ja'||i);
+    END LOOP;
+
+    COMMIT;
+END;
+/
