@@ -142,7 +142,7 @@ VALUES (
 );
 
 '-----------------------------------------------------------------------'
-INSERT INTO CESTA (CESTA) VALUES ('C:\Data\Import2026');
+INSERT INTO CESTA (CESTA) VALUES ('C:\Data\Import2027');
 INSERT INTO JMENO_SOUBORU (JMENO_SOUBORU, CESTA_ID)
 VALUES ('Vystup_UNOR.xlsx', 1);
 INSERT INTO ListExcel (NAZEV_LISTU, ID_JMENO_SOUBORU)
@@ -151,12 +151,12 @@ INSERT INTO JMENO_TABULKY (NAZEV_TABULKY, ID_ListExcel)
 VALUES ('Tabulka_AB', 1);
 
 INSERT INTO DIMENZE (TYP_DIMENZE, KOD_DIMENZE, SLOVNI_POPIS_DIMENZE, CISLENIK_DIMENZE)
-VALUES ('ESA', 'P.1', 'Produkce celkem', '5020');
+VALUES ('NACE', 'A', 'Produkce celkem', '5120');
 
 INSERT INTO DIMENZE (TYP_DIMENZE, KOD_DIMENZE, SLOVNI_POPIS_DIMENZE, CISLENIK_DIMENZE)
-VALUES ('NACE', '29', 'Výroba motorových vozidel', '5080');
+VALUES ('NACE', '60', 'Výroba motorových vozidel', '5080');
 INSERT INTO BUNKA (RADEK, SLOUPEC, ID_ListExcel, ID_JMENO_TABULKY)
-VALUES (5, 3, 1, 1);
+VALUES (6, 3, 1, 1);
 INSERT INTO HODNOTY_ALT (
     ID_BUNKA, ID_JMENO_TABULKY, ID_DIMENZE,
     ROK_PUBL, Q_PUBL,
@@ -165,18 +165,18 @@ INSERT INTO HODNOTY_ALT (
     HODNOTA, ROK, KVARTAL
 )
 VALUES (
-    2,       -- ID_BUNKA
+    3,       -- ID_BUNKA
     NULL,    -- mimo tabulku
-    2,       -- NACE
-    2024, 3,
-    2024, 4,
+    1,       -- NACE
+    2025, 4,
+    2026, 5,
     '0002',
     'Výpočet B2',
     987.65,
     2024, 4
 );
 
-SELECT 
+SELECT
     -- CESTA
     c.CESTA_ID,
     c.CESTA,
@@ -189,14 +189,21 @@ SELECT
     l.ID_ListExcel,
     l.NAZEV_LISTU,
 
-    -- TABULKA (volitelná)
+    -- EXCEL TABULKA (volitelné)
     jt.ID_JMENO_TABULKY,
     jt.NAZEV_TABULKY,
 
-    -- BUNKA
+    -- BUŇKA
     b.ID_BUNKA,
     b.RADEK,
     b.SLOUPEC,
+
+    -- DIMENZE (volitelné)
+    d.ID_DIMENZE,
+    d.TYP_DIMENZE,
+    d.KOD_DIMENZE,
+    d.SLOVNI_POPIS_DIMENZE,
+    d.CISLENIK_DIMENZE,
 
     -- HODNOTY_ALT
     h.ID_HODNOTY,
@@ -211,10 +218,13 @@ FROM HODNOTY_ALT h
 JOIN BUNKA b 
     ON h.ID_BUNKA = b.ID_BUNKA
 LEFT JOIN JMENO_TABULKY jt 
-    ON b.ID_JMENO_TABULKY = jt.ID_JMENO_TABULKY
+    ON b.ID_JMENO_TABULKY = jt.ID_JMENO_TABULKY        -- volitelná excelová tabulka
 JOIN ListExcel l 
     ON b.ID_ListExcel = l.ID_ListExcel
 JOIN JMENO_SOUBORU s 
     ON l.ID_JMENO_SOUBORU = s.ID_JMENO_SOUBORU
 JOIN CESTA c 
-    ON s.CESTA_ID = c.CESTA_ID;
+    ON s.CESTA_ID = c.CESTA_ID
+LEFT JOIN DIMENZE d
+    ON h.ID_DIMENZE = d.ID_DIMENZE;                     -- volitelná dimenze
+
